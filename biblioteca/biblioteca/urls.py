@@ -17,8 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("gamerboxd/", include ('gamerboxd.urls')),
+    path("gamerboxd/", include('gamerboxd.urls')),
+    path("accounts/", include('django.contrib.auth.urls')),
+    path("seguranca/", views.homeSec, name='sec-home'),
+    path("seguranca/signup", views.registro, name='sec-registro'),
 ]
