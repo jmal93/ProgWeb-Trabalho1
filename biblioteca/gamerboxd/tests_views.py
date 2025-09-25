@@ -26,3 +26,17 @@ class RegistroViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('sec-home'))
         self.assertTrue(User.objects.filter(username='teste').exists())
+
+
+class LoginViewTests(TestCase):
+    def test_profile_get(self):
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/login.html')
+
+
+class ProfileViewTests(TestCase):
+    def test_profile_get(self):
+        response = self.client.get(reverse('profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/profile.html')

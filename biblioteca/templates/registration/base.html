@@ -17,6 +17,7 @@
     <a href="{% url 'sec-home' %}">Página inicial de segurança</a>
     {% if not user.is_authenticated %}
     | <a href="{% url 'sec-registro' %}">Registrar</a>
+    | <a href="{% url 'login' %}?next={% url 'profile' %}">Login</a>
     {% endif %}
     Você é o nosso visitante
   </div>

@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 
 
+def profile(request):
+    return render(request, "registration/profile.html")
+
+
 def homeSec(request):
     return render(request, "registration/homeSec.html")
 
