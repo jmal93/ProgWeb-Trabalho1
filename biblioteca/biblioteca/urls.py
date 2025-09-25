@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("gamerboxd/", include('gamerboxd.urls')),
     path("accounts/", include('django.contrib.auth.urls')),
-    path("seguranca/", views.homeSec, name='sec-home'),
-    path("seguranca/signup", views.registro, name='sec-registro'),
+    path("accounts/", views.homeSec, name='sec-home'),
+    path("accounts/signup", views.registro, name='sec-registro'),
 ]

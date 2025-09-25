@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 def homeSec(request):
-    return render(request, "seguranca/homeSec.html")
+    return render(request, "registration/homeSec.html")
 
 
 def registro(request):
@@ -16,4 +16,4 @@ def registro(request):
     else:
         formulario = UserCreationForm()
     context = {'form': formulario, }
-    return render(request, 'seguranca/registro.html', context)
+    return render(request, 'registration/registro.html', context)
