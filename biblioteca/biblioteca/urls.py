@@ -20,6 +20,7 @@ from django.urls.conf import include
 from . import views
 
 urlpatterns = [
+    path('', views.homePage, name='home-page'),
     path('admin/', admin.site.urls),
     path("gamerboxd/", include('gamerboxd.urls')),
     path("accounts/", include('django.contrib.auth.urls')),
