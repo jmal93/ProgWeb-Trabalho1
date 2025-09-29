@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Reviews de {{ usuario.nome }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        .review {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .jogo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #0077cc;
+        }
+        .nota {
+            margin-top: 0.3rem;
+            font-weight: bold;
+            color: #ff6600;
+        }
+        .descricao {
+            margin-top: 0.5rem;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reviews de {{ usuario.nome }}</h1>
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="review">
+                <div class="id_jogo">{{ review.id_jogo.nome }}</div>
+                <div class="nota">Nota: {{ review.nota }}/10</div>
+                <div class="descricao">{{ review.descricao }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Esse usuário ainda não escreveu nenhuma review.</p>
+    {% endif %}
+</body>
+</html>

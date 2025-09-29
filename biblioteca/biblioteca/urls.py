@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
 from . import views
+from django.contrib.auth.views import LoginView
 
 urlpatterns = [
     path('', views.homePage, name='home-page'),
@@ -26,5 +27,6 @@ urlpatterns = [
     path("accounts/", include('django.contrib.auth.urls')),
     path("accounts/", views.homeSec, name='sec-home'),
     path("accounts/signup", views.registro, name='sec-registro'),
+    path("accounts/profile", views.profile, name='profile'),
     path("accounts/profile", views.profile, name='profile'),
 ]
