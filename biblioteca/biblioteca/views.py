@@ -10,16 +10,12 @@ def profile(request):
     return render(request, "registration/profile.html")
 
 
-def homeSec(request):
-    return render(request, "registration/homeSec.html")
-
-
 def registro(request):
     if request.method == 'POST':
         formulario = UserCreationForm(request.POST)
         if formulario.is_valid():
             formulario.save()
-            return redirect('sec-home')
+            return redirect('home-page')
 
     else:
         formulario = UserCreationForm()

@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 
 class ViewsTests(TestCase):
-    def test_home_sec(self):
-        response = self.client.get(reverse('sec-home'))
+    def test_home_page(self):
+        response = self.client.get(reverse('home-page'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'registration/homeSec.html')
+        self.assertTemplateUsed(response, 'biblioteca/homePage.html')
 
 
 class RegistroViewTests(TestCase):
@@ -24,7 +24,7 @@ class RegistroViewTests(TestCase):
         }
         response = self.client.post(reverse('sec-registro'), data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('sec-home'))
+        self.assertRedirects(response, reverse('home-page'))
         self.assertTrue(User.objects.filter(username='teste').exists())
 
 
