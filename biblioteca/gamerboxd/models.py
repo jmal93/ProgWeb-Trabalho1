@@ -1,12 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 class Usuario(models.Model):
-    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100, help_text="Insira o nome")
     email = models.EmailField(max_length=254, help_text="Insira o email")
 
     def __str__(self):
         return self.nome
+
 
 class Jogo(models.Model):
     id = models.AutoField(primary_key=True)

@@ -1,11 +1,13 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 from gamerboxd.models import Jogo, Usuario, Review
 
 
 class UsuarioModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Usuario.objects.create(nome="Joao", email="teste@teste.com")
+        user = User.objects.create(username="joao", password="senha@123")
+        Usuario.objects.create(nome="Joao", email="teste@teste.com", user=user)
 
     def test_retorna_nome(self):
         usuario = Usuario.objects.get(id=1)
@@ -28,8 +30,10 @@ class JogoModelTest(TestCase):
 class ReviewModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        user = User.objects.create(
+            username="joao_user", password="password123")
         cls.usuario = Usuario.objects.create(
-            nome="Joao", email="teste@teste.com")
+            user=user, nome="Joao", email="teste@teste.com")
         cls.jogo = Jogo.objects.create(nome='GTA', genero="Acao",
                                        desenvolvedora="Rockstar", dtLanc="2013-09-07")
 
