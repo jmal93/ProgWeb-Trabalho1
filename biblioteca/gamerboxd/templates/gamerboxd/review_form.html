@@ -2,7 +2,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Nova Review</title>
+    <title>
+        {% if edicao %}
+            Editar Review
+        {% else %}
+            Nova Review
+        {% endif %}
+    </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,15 +48,38 @@
         button:hover {
             background: #005fa3;
         }
+        .voltar {
+            display: inline-block;
+            margin-top: 1rem;
+            text-decoration: none;
+            color: #555;
+        }
+        .voltar:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h1>Nova Review para {{ usuario.nome }}</h1>
+    <h1>
+        {% if edicao %}
+            Editar Review de {{ usuario.nome }}
+        {% else %}
+            Nova Review para {{ usuario.nome }}
+        {% endif %}
+    </h1>
 
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Salvar Review</button>
+        <button type="submit">
+            {% if edicao %}
+                Salvar Alterações
+            {% else %}
+                Salvar Review
+            {% endif %}
+        </button>
     </form>
+
+    <a class="voltar" href="{% url 'review-list' usuario.id %}">← Voltar para Reviews</a>
 </body>
 </html>

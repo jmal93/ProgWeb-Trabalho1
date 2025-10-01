@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Review</title>
+</head>
+<body>
+    <h1>Excluir Review</h1>
+    <p>Tem certeza que deseja excluir a review do jogo <b>{{ review.id_jogo.nome }}</b> feita por <b>{{ usuario.nome }}</b>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sim, excluir</button>
+        <a href="{% url 'review-list' usuario.id %}">Cancelar</a>
+    </form>
+</body>
+</html>

@@ -11,7 +11,7 @@ class ReviewForm(forms.ModelForm):
         usuario = self.initial.get("id_usuario")
         jogo = cleaned_data.get("id_jogo")
 
-        if usuario and jogo:
+        if not self.instance.pk:
             if Review.objects.filter(id_usuario=usuario, id_jogo=jogo).exists():
                 raise forms.ValidationError("Esse usuário já fez uma review para esse jogo.")
 
