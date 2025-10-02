@@ -12,28 +12,57 @@ class ViewsTests(TestCase):
 
 
 class RegistroViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.data = {
+            'username': 'teste',
+            'password1': 'SenhaForte123',
+            'password2': 'SenhaForte123',
+        }
+
     def test_registro_get(self):
         response = self.client.get(reverse('sec-registro'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/registro.html')
 
     def test_registro_post_valido(self):
-        data = {
-            'username': 'teste',
-            'password1': 'SenhaForte123',
-            'password2': 'SenhaForte123',
-        }
-        response = self.client.post(reverse('sec-registro'), data)
+        response = self.client.post(reverse('sec-registro'), self.data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('home-page'))
         self.assertTrue(User.objects.filter(username='teste').exists())
 
+    def test_registra_usuario_sucesso(self):
+        self.client.post(
+            reverse('sec-registro'),
+            data=self.data,
+        )
+        self.assertTrue(User.objects.filter(
+            username=self.data['username']).exists())
+        self.assertTrue(Usuario.objects.filter(
+            nome=self.data['username']).exists())
+
 
 class LoginViewTests(TestCase):
-    def test_profile_get(self):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username="joao", password="password123")
+
+    def test_pagina_login_abre(self):
         response = self.client.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/login.html')
+
+    def test_login_valido(self):
+        self.client.post(
+            reverse('login'),
+            {
+                "username": "joao",
+                "password": "password123"
+            },
+            follow=True
+        )
+        response = self.client.get(reverse('home-page'))
+        self.assertTrue(response.context['user'].is_authenticated)
 
 
 class ProfileViewTests(TestCase):
