@@ -74,9 +74,17 @@ class ReviewViewsTests(TestCase):
 
     def setUp(self):
         self.jogo1 = Jogo.objects.create(
-            nome="Super Mario Odyssey", desenvolvedora="Nintendo", dtLanc="2013-09-07", genero="Plataforma")
+            nome="Super Mario Odyssey",
+            desenvolvedora="Nintendo",
+            dtLanc="2013-09-07",
+            genero="Plataforma"
+        )
         self.jogo2 = Jogo.objects.create(
-            nome="Mortal Kombat", desenvolvedora="Warner Bros", dtLanc="2023-02-14", genero="Luta")
+            nome="Mortal Kombat",
+            desenvolvedora="Warner Bros",
+            dtLanc="2023-02-14",
+            genero="Luta"
+        )
 
         self.review1 = Review.objects.create(
             id_usuario=self.usuario1,
