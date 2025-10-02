@@ -45,7 +45,10 @@ class RegistroViewTests(TestCase):
 class LoginViewTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user(username="joao", password="password123")
+        cls.user = User.objects.create_user(
+            username="joao",
+            password="password123"
+        )
 
     def test_pagina_login_abre(self):
         response = self.client.get(reverse('login'))
@@ -147,3 +150,114 @@ class ReviewViewsTests(TestCase):
             reverse('review-list', kwargs={"id_usuario": self.usuario2.id}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ruim")
+
+    def test_usuario_ve_formulario_cria_review(self):
+        self.client.login(username="user1", password="password123")
+        response = self.client.get(
+            reverse(
+                'review-create',
+                kwargs={"id_usuario": self.usuario1.id}
+            ),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'gamerboxd/review_form.html')
+
+    def test_usuario_cria_review_post_valido(self):
+        self.client.login(username="user1", password="password123")
+        review = {
+            'id_jogo': self.jogo2.id,
+            'nota': 8,
+            'descricao': 'bom'
+        }
+        response = self.client.post(
+            reverse(
+                'review-create',
+                kwargs={"id_usuario": self.usuario1.id}
+            ),
+            review,
+            follow=True
+        )
+        self.assertRedirects(response, reverse(
+            'review-list', kwargs={"id_usuario": self.usuario1.id}))
+        self.assertTrue(Review.objects.filter(
+            id_jogo=self.jogo2.id, id_usuario=self.usuario1.id).exists())
+
+    def test_usuario_ve_formulario_edita_review(self):
+        self.client.login(username="user1", password="password123")
+        response = self.client.get(
+            reverse(
+                'review-edit',
+                kwargs={
+                    "id_usuario": self.usuario1.id,
+                    "id_jogo": self.jogo1.id,
+                }
+            ),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'gamerboxd/review_form.html')
+
+    def test_usuario_edita_review_post_valido(self):
+        self.client.login(username="user1", password="password123")
+        review = {
+            'id_jogo': self.jogo1.id,
+            'nota': 7,
+            'descricao': 'bom'
+        }
+        response = self.client.post(
+            reverse(
+                'review-edit',
+                kwargs={
+                    "id_usuario": self.usuario1.id,
+                    "id_jogo": self.jogo1.id,
+                }
+            ),
+            review,
+            follow=True
+        )
+        self.assertRedirects(response, reverse(
+            'review-list', kwargs={"id_usuario": self.usuario1.id}))
+        self.assertTrue(Review.objects.filter(
+            id_jogo=self.jogo1.id,
+            id_usuario=self.usuario1.id,
+            nota=7).exists()
+        )
+
+    def test_usuario_ve_confirmacao_delete(self):
+        self.client.login(username="user1", password="password123")
+        response = self.client.get(
+            reverse(
+                'review-delete',
+                kwargs={
+                    "id_usuario": self.usuario1.id,
+                    "id_jogo": self.jogo1.id,
+                }
+            ),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, 'gamerboxd/review_confirm_delete.html')
+
+    def test_usuario_deleta_view(self):
+        self.client.login(username="user1", password="password123")
+        response = self.client.post(
+            reverse(
+                'review-delete',
+                kwargs={
+                    "id_usuario": self.usuario1.id,
+                    "id_jogo": self.jogo1.id,
+                }
+            ),
+            follow=True
+        )
+        self.assertRedirects(response, reverse(
+            'review-list', kwargs={"id_usuario": self.usuario1.id}))
+        self.assertFalse(Review.objects.filter(
+            id_jogo=self.jogo1.id,
+            id_usuario=self.usuario1.id,).exists()
+        )
+
+    def test_redireciona_para_lista_reviews(self):
+        self.client.login(username="user1", password="password123")
+        response = self.client.get(reverse('user-reviews'))
+        self.assertRedirects(response, reverse(
+            'review-list', kwargs={"id_usuario": self.usuario1.id}))

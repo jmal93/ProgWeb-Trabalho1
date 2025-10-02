@@ -1,26 +1,27 @@
-from django.shortcuts import render
-from gamerboxd.models import Review
-
-from .models import Usuario, Review
+from gamerboxd.models import Usuario, Review
 from .forms import ReviewForm
-
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
+
 def reviewListView(request, id_usuario):
     usuario = get_object_or_404(Usuario, id=id_usuario)
 
-    if not request.user.is_superuser and request.user.id != usuario.id:
-        return HttpResponseForbidden("Você não tem permissão para ver as reviews de outro usuário.")
+    if not request.user.is_superuser and request.user != usuario.user:
+        return HttpResponseForbidden(
+            "Você não tem permissão para ver as reviews de outro usuário."
+        )
 
-    reviews = Review.objects.filter(id_usuario=usuario).select_related("id_jogo")
-    
+    reviews = Review.objects.filter(
+        id_usuario=usuario).select_related("id_jogo")
+
     context = {
         "usuario": usuario,
         "reviews": reviews,
     }
     return render(request, "gamerboxd/review_list.html", context)
+
 
 def reviewCreateView(request, id_usuario):
     usuario = get_object_or_404(Usuario, id=id_usuario)
@@ -40,12 +41,14 @@ def reviewCreateView(request, id_usuario):
         "usuario": usuario
     })
 
+
 def reviewEditView(request, id_usuario, id_jogo):
     usuario = get_object_or_404(Usuario, id=id_usuario)
     review = get_object_or_404(Review, id_usuario=usuario, id_jogo=id_jogo)
 
     if request.method == "POST":
-        form = ReviewForm(request.POST, instance=review, initial={"id_usuario": usuario})
+        form = ReviewForm(request.POST, instance=review,
+                          initial={"id_usuario": usuario})
         if form.is_valid():
             form.save()
             return redirect("review-list", id_usuario=usuario.id)
@@ -57,6 +60,7 @@ def reviewEditView(request, id_usuario, id_jogo):
         "usuario": usuario,
         "edicao": True
     })
+
 
 def reviewDeleteView(request, id_usuario, id_jogo):
     usuario = get_object_or_404(Usuario, id=id_usuario)
@@ -70,6 +74,7 @@ def reviewDeleteView(request, id_usuario, id_jogo):
         "review": review,
         "usuario": usuario
     })
+
 
 @login_required
 def redirectToUserReviews(request):
