@@ -4,7 +4,6 @@ from gamerboxd.views import (
     reviewCreateView,
     reviewEditView,
     reviewDeleteView,
-    redirectToUserReviews,
     jogoListView,
     jogoCreateView,
     jogoPageView
@@ -13,7 +12,6 @@ from gamerboxd.views import (
 urlpatterns = [
     path("reviews/", reviewListView, name="review-list"),
     path("reviews/new/", reviewCreateView, name="review-create"),
-    path("reviews/", redirectToUserReviews, name="user-reviews"),
     path("reviews/<int:id_jogo>/edit/", reviewEditView, name="review-edit"),
     path("reviews/<int:id_jogo>/delete/", reviewDeleteView, name="review-delete"),
     path("jogos/", jogoListView, name="jogo-list"),
