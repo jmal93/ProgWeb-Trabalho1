@@ -1,78 +1,68 @@
-from gamerboxd.models import Usuario, Review
+from gamerboxd.models import Review, Jogo
 from .forms import ReviewForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
-
-def reviewListView(request, id_usuario):
-    usuario = get_object_or_404(Usuario, id=id_usuario)
-
-    if not request.user.is_superuser and request.user != usuario.user:
-        return HttpResponseForbidden(
-            "Você não tem permissão para ver as reviews de outro usuário."
-        )
-
+@login_required
+def reviewListView(request):
     reviews = Review.objects.filter(
-        id_usuario=usuario).select_related("id_jogo")
+        usuario=request.user).select_related("id_jogo")
 
     context = {
-        "usuario": usuario,
+        "usuario": request.user,
         "reviews": reviews,
     }
     return render(request, "gamerboxd/review_list.html", context)
 
-
-def reviewCreateView(request, id_usuario):
-    usuario = get_object_or_404(Usuario, id=id_usuario)
-
+@login_required
+def reviewCreateView(request):
     if request.method == "POST":
-        form = ReviewForm(request.POST, initial={"id_usuario": usuario})
+        form = ReviewForm(request.POST, usuario=request.user)
+        form.usuario = request.user
         if form.is_valid():
             review = form.save(commit=False)
-            review.id_usuario = usuario
+            review.usuario = request.user
             review.save()
-            return redirect("review-list", id_usuario=id_usuario)
+            return redirect("review-list")
     else:
-        form = ReviewForm(initial={"id_usuario": usuario})
+        form = ReviewForm(usuario=request.user)
 
     return render(request, "gamerboxd/review_form.html", {
         "form": form,
-        "usuario": usuario
+        "usuario": request.user,
+        "edicao": False
     })
 
-
-def reviewEditView(request, id_usuario, id_jogo):
-    usuario = get_object_or_404(Usuario, id=id_usuario)
-    review = get_object_or_404(Review, id_usuario=usuario, id_jogo=id_jogo)
+@login_required
+def reviewEditView(request, id_jogo):
+    review = get_object_or_404(Review, usuario=request.user, id_jogo=id_jogo)
 
     if request.method == "POST":
-        form = ReviewForm(request.POST, instance=review,
-                          initial={"id_usuario": usuario})
+        form = ReviewForm(request.POST, instance=review, usuario=request.user)
         if form.is_valid():
             form.save()
-            return redirect("review-list", id_usuario=usuario.id)
+            return redirect("review-list")
     else:
-        form = ReviewForm(instance=review, initial={"id_usuario": usuario})
+        form = ReviewForm(instance=review, usuario=request.user)
 
     return render(request, "gamerboxd/review_form.html", {
         "form": form,
-        "usuario": usuario,
+        "usuario": request.user,
         "edicao": True
     })
 
-
-def reviewDeleteView(request, id_usuario, id_jogo):
-    usuario = get_object_or_404(Usuario, id=id_usuario)
-    review = get_object_or_404(Review, id_usuario=usuario, id_jogo=id_jogo)
+@login_required
+def reviewDeleteView(request, id_jogo):
+    review = get_object_or_404(Review, usuario=request.user, id_jogo=id_jogo)
 
     if request.method == "POST":
         review.delete()
-        return redirect("review-list", id_usuario=usuario.id)
+        return redirect("review-list")
 
     return render(request, "gamerboxd/review_confirm_delete.html", {
         "review": review,
-        "usuario": usuario
+        "usuario": request.user
     })
 
 

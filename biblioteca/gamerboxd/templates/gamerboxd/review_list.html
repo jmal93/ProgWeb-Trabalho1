@@ -36,7 +36,8 @@
     </style>
 </head>
 <body>
-    <h1>Reviews de {{ usuario.nome }}</h1>
+    <h1>Reviews de {{ usuario.username }}</h1>
+    <a class="nova-review" href="{% url 'review-create' %}">+ Nova Review</a>
 
     {% if reviews %}
         {% for review in reviews %}
@@ -45,8 +46,8 @@
                 <div class="nota">Nota: {{ review.nota }}/10</div>
                 <div class="descricao">{{ review.descricao }}</div>
 
-                <a href="{% url 'review-edit' usuario.id review.id_jogo.id %}">Editar</a> |
-                <a href="{% url 'review-delete' usuario.id review.id_jogo.id %}">Excluir</a>
+                <a href="{% url 'review-edit' review.id_jogo.id %}">Editar</a> |
+                <a href="{% url 'review-delete' review.id_jogo.id %}">Excluir</a>
             </div>
         {% endfor %}
     {% else %}

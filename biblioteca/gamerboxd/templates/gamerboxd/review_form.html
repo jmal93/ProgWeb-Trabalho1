@@ -62,9 +62,9 @@
 <body>
     <h1>
         {% if edicao %}
-            Editar Review de {{ usuario.nome }}
+            Editar Review de {{ usuario.username }}
         {% else %}
-            Nova Review para {{ usuario.nome }}
+            Nova Review para {{ usuario.username }}
         {% endif %}
     </h1>
 
@@ -80,6 +80,6 @@
         </button>
     </form>
 
-    <a class="voltar" href="{% url 'review-list' usuario.id %}">← Voltar para Reviews</a>
+    <a class="voltar" href="{% url 'review-list'}">← Voltar para Reviews</a>
 </body>
 </html>
