@@ -6,12 +6,12 @@
 </head>
 <body>
     <h1>Excluir Review</h1>
-    <p>Tem certeza que deseja excluir a review do jogo <b>{{ review.id_jogo.nome }}</b> feita por <b>{{ usuario.nome }}</b>?</p>
+    <p>Tem certeza que deseja excluir a review do jogo <b>{{ review.id_jogo.nome }}</b> feita por <b>{{ usuario.username }}</b>?</p>
 
     <form method="post">
         {% csrf_token %}
         <button type="submit">Sim, excluir</button>
-        <a href="{% url 'review-list' usuario.id %}">Cancelar</a>
+        <a href="{% url 'review-list' %}">Cancelar</a>
     </form>
 </body>
 </html>

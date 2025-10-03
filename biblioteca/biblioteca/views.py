@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from gamerboxd.models import Usuario
+from django.contrib.auth import login
 
 
 def homePage(request):
@@ -10,17 +10,15 @@ def homePage(request):
 def profile(request):
     return render(request, "registration/profile.html")
 
-
 def registro(request):
     if request.method == 'POST':
         formulario = UserCreationForm(request.POST)
         if formulario.is_valid():
             user = formulario.save()
-            Usuario.objects.create(
-                user=user, nome=user.username, email=user.email if user.email else "")
-            return redirect('home-page')
-
+            login(request, user)
+            return redirect('review-list')  
     else:
         formulario = UserCreationForm()
-    context = {'form': formulario, }
+    
+    context = {'form': formulario}
     return render(request, 'registration/registro.html', context)

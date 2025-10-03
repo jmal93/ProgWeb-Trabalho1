@@ -1,16 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
-class Usuario(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nome = models.CharField(max_length=100, help_text="Insira o nome")
-    email = models.EmailField(max_length=254, help_text="Insira o email")
-
-    def __str__(self):
-        return self.nome
-
-
 class Jogo(models.Model):
     id = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100, help_text="Insira o nome do jogo")
@@ -28,7 +18,7 @@ class Jogo(models.Model):
 
 class Review(models.Model):
     id_jogo = models.ForeignKey(Jogo, on_delete=models.CASCADE)
-    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nota = models.IntegerField(help_text="Insira a nota")
     descricao = models.CharField(
         max_length=256, help_text="Insira a descricao")
@@ -36,10 +26,10 @@ class Review(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['id_jogo', 'id_usuario'],
+                fields=['id_jogo', 'usuario'],
                 name='unique_jogo_usuario_combination'
             )
         ]
 
     def __str__(self):
-        return f"Review de {self.id_usuario} para {self.id_jogo}"
+        return f"Review de {self.usuario} para {self.id_jogo}"
