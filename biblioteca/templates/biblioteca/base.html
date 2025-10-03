@@ -6,8 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="{% static 'css/forms.css' %}" rel="stylesheet">
+  {% block extra_css %}{% endblock %}
 </head>
 
 <body>
@@ -15,7 +14,7 @@
     <div class="container-fluid">
       <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <a href="/">Gamerboxd </a> | 
+          <a href="/">Gamerboxd </a> |
           <a href="/gamerboxd/jogos"> Jogos</a> |
           <a href="/gamerboxd/reviews/"> Reviews</a>
         </div>
