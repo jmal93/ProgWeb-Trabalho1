@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ jogo.nome }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f9f9f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 0.5rem; }
+        .info { margin-bottom: 2rem; }
+        .review { border-top: 1px solid #ddd; padding: 1rem 0; }
+        .review:first-child { border-top: none; }
+        .nota { font-weight: bold; color: #c00; }
+        .usuario { font-style: italic; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ jogo.nome }}</h1>
+        <div class="info">
+            <p><strong>Gênero:</strong> {{ jogo.genero }}</p>
+            <p><strong>Desenvolvedora:</strong> {{ jogo.desenvolvedora }}</p>
+            <p><strong>Data de lançamento:</strong> {{ jogo.dtLanc }}</p>
+        </div>
+
+        {% if user.is_authenticated %}
+            {% if user_review %}
+                <a href="{% url 'review-edit' jogo.id %}" style="margin-right:1rem;">Editar sua Review</a>
+            {% else %}
+                <a href="{% url 'review-create' %}?jogo={{ jogo.id }}">➕ Adicionar Review</a>
+            {% endif %}
+        {% endif %}
+
+        <h2>Reviews</h2>
+        {% if reviews %}
+            {% for review in reviews %}
+                <div class="review">
+                    <p class="nota">Nota: {{ review.nota }}/10</p>
+                    <p>{{ review.descricao }}</p>
+                    <p class="usuario">— {{ review.usuario.username }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Este jogo ainda não possui reviews.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -17,16 +17,20 @@ def reviewListView(request):
 
 @login_required
 def reviewCreateView(request):
+    jogo_id = request.GET.get("jogo")
+    initial_data = {}
+    if jogo_id:
+        initial_data["jogo"] = jogo_id
+
     if request.method == "POST":
         form = ReviewForm(request.POST, usuario=request.user)
-        form.usuario = request.user
         if form.is_valid():
             review = form.save(commit=False)
             review.usuario = request.user
             review.save()
             return redirect("review-list")
     else:
-        form = ReviewForm(usuario=request.user)
+        form = ReviewForm(usuario=request.user, initial=initial_data)
 
     return render(request, "gamerboxd/review_form.html", {
         "form": form,
@@ -70,3 +74,16 @@ def reviewDeleteView(request, id_jogo):
 def redirectToUserReviews(request):
     id_usuario = request.user.id
     return redirect("review-list", id_usuario=id_usuario)
+
+def jogoPageView(request, id_jogo):
+    jogo = get_object_or_404(Jogo, id=id_jogo)
+    reviews = Review.objects.filter(id_jogo=jogo).select_related("usuario")
+    
+    if request.user.is_authenticated:
+        user_review = reviews.filter(usuario=request.user).first()
+
+    return render(request, "gamerboxd/jogo_page.html", {
+        "jogo": jogo,
+        "reviews": reviews,
+        "user_review": user_review
+    })
