@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from gamerboxd.models import Jogo, Usuario, Review
+from gamerboxd.models import Jogo, Review
 
 
 class ViewsTests(TestCase):
@@ -28,7 +28,7 @@ class RegistroViewTests(TestCase):
     def test_registro_post_valido(self):
         response = self.client.post(reverse('sec-registro'), self.data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('home-page'))
+        self.assertRedirects(response, reverse('review-list'))
         self.assertTrue(User.objects.filter(username='teste').exists())
 
     def test_registra_usuario_sucesso(self):
@@ -38,8 +38,6 @@ class RegistroViewTests(TestCase):
         )
         self.assertTrue(User.objects.filter(
             username=self.data['username']).exists())
-        self.assertTrue(Usuario.objects.filter(
-            nome=self.data['username']).exists())
 
 
 class LoginViewTests(TestCase):
@@ -143,17 +141,6 @@ class ReviewViewsTests(TestCase):
             password='password123'
         )
 
-        cls.usuario1 = Usuario.objects.create(
-            user=cls.user1,
-            nome='joao',
-            email='joao@email.com'
-        )
-        cls.usuario2 = Usuario.objects.create(
-            user=cls.user2,
-            nome='maria',
-            email='maria@email.com'
-        )
-
     def setUp(self):
         self.jogo1 = Jogo.objects.create(
             nome="Super Mario Odyssey",
@@ -169,13 +156,13 @@ class ReviewViewsTests(TestCase):
         )
 
         self.review1 = Review.objects.create(
-            id_usuario=self.usuario1,
+            usuario=self.user1,
             id_jogo=self.jogo1,
             nota=10,
             descricao="bom"
         )
         self.review2 = Review.objects.create(
-            id_usuario=self.usuario2,
+            usuario=self.user2,
             id_jogo=self.jogo2,
             nota=0,
             descricao="ruim"
@@ -183,32 +170,14 @@ class ReviewViewsTests(TestCase):
 
     def test_usuario_acessa_proprias_reviews(self):
         self.client.login(username="user1", password="password123")
-        response = self.client.get(
-            reverse('review-list', kwargs={"id_usuario": self.usuario1.id}))
+        response = self.client.get(reverse('review-list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "bom")
-
-    def test_usuario_nao_acessa_review_de_outro_usuario(self):
-        self.client.login(username="user1", password="password123")
-        response = self.client.get(
-            reverse('review-list', kwargs={"id_usuario": self.usuario2.id}))
-        self.assertEqual(response.status_code, 403)
-
-    def test_superusuario_acessa_review_de_outro_usuario(self):
-        self.client.login(username="admin", password="password123")
-        response = self.client.get(
-            reverse('review-list', kwargs={"id_usuario": self.usuario2.id}))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "ruim")
 
     def test_usuario_ve_formulario_cria_review(self):
         self.client.login(username="user1", password="password123")
         response = self.client.get(
-            reverse(
-                'review-create',
-                kwargs={"id_usuario": self.usuario1.id}
-            ),
-        )
+            reverse('review-create') + f"?jogo={self.jogo1.id}")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'gamerboxd/review_form.html')
 
@@ -220,29 +189,18 @@ class ReviewViewsTests(TestCase):
             'descricao': 'bom'
         }
         response = self.client.post(
-            reverse(
-                'review-create',
-                kwargs={"id_usuario": self.usuario1.id}
-            ),
+            reverse('review-create'),
             review,
             follow=True
         )
-        self.assertRedirects(response, reverse(
-            'review-list', kwargs={"id_usuario": self.usuario1.id}))
+        self.assertRedirects(response, reverse('review-list'))
         self.assertTrue(Review.objects.filter(
-            id_jogo=self.jogo2.id, id_usuario=self.usuario1.id).exists())
+            id_jogo=self.jogo2.id, usuario=self.user1.id).exists())
 
     def test_usuario_ve_formulario_edita_review(self):
         self.client.login(username="user1", password="password123")
         response = self.client.get(
-            reverse(
-                'review-edit',
-                kwargs={
-                    "id_usuario": self.usuario1.id,
-                    "id_jogo": self.jogo1.id,
-                }
-            ),
-        )
+            reverse('review-edit', kwargs={"id_jogo": self.jogo1.id, }))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'gamerboxd/review_form.html')
 
@@ -254,35 +212,21 @@ class ReviewViewsTests(TestCase):
             'descricao': 'bom'
         }
         response = self.client.post(
-            reverse(
-                'review-edit',
-                kwargs={
-                    "id_usuario": self.usuario1.id,
-                    "id_jogo": self.jogo1.id,
-                }
-            ),
+            reverse('review-edit', kwargs={"id_jogo": self.jogo1.id}),
             review,
             follow=True
         )
-        self.assertRedirects(response, reverse(
-            'review-list', kwargs={"id_usuario": self.usuario1.id}))
+        self.assertRedirects(response, reverse('review-list'))
         self.assertTrue(Review.objects.filter(
             id_jogo=self.jogo1.id,
-            id_usuario=self.usuario1.id,
+            usuario=self.user1.id,
             nota=7).exists()
         )
 
     def test_usuario_ve_confirmacao_delete(self):
         self.client.login(username="user1", password="password123")
         response = self.client.get(
-            reverse(
-                'review-delete',
-                kwargs={
-                    "id_usuario": self.usuario1.id,
-                    "id_jogo": self.jogo1.id,
-                }
-            ),
-        )
+            reverse('review-delete', kwargs={"id_jogo": self.jogo1.id}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
             response, 'gamerboxd/review_confirm_delete.html')
@@ -290,24 +234,11 @@ class ReviewViewsTests(TestCase):
     def test_usuario_deleta_view(self):
         self.client.login(username="user1", password="password123")
         response = self.client.post(
-            reverse(
-                'review-delete',
-                kwargs={
-                    "id_usuario": self.usuario1.id,
-                    "id_jogo": self.jogo1.id,
-                }
-            ),
+            reverse('review-delete', kwargs={"id_jogo": self.jogo1.id, }),
             follow=True
         )
-        self.assertRedirects(response, reverse(
-            'review-list', kwargs={"id_usuario": self.usuario1.id}))
+        self.assertRedirects(response, reverse('review-list'))
         self.assertFalse(Review.objects.filter(
             id_jogo=self.jogo1.id,
-            id_usuario=self.usuario1.id,).exists()
+            usuario=self.user1.id,).exists()
         )
-
-    def test_redireciona_para_lista_reviews(self):
-        self.client.login(username="user1", password="password123")
-        response = self.client.get(reverse('user-reviews'))
-        self.assertRedirects(response, reverse(
-            'review-list', kwargs={"id_usuario": self.usuario1.id}))
