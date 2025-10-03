@@ -1,0 +1,25 @@
+{% extends "biblioteca/base.html" %}
+
+{% block title %}Excluir Jogo{% endblock title %}
+
+{% block content %}
+<h1>Excluir Jogo</h1>
+<p>Tem certeza que deseja excluir o jogo <b>{{ jogo.nome }}</b>?</p>
+
+<form>
+  {% csrf_token %}
+  <button type="submit">Sim</button>
+  <a href={% url 'jogo-list' %}>Cancelar</a>
+</form>
+{% endblock content %}
+<body>
+    <h1>Excluir Review</h1>
+    <p>Tem certeza que deseja excluir a review do jogo <b>{{ review.id_jogo.nome }}</b> feita por <b>{{ usuario.username }}</b>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sim, excluir</button>
+        <a href="{% url 'review-list' %}">Cancelar</a>
+    </form>
+</body>
+</html>

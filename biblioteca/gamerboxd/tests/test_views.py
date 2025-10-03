@@ -74,6 +74,13 @@ class ProfileViewTests(TestCase):
 
 
 class JogoViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(
+            username='user1',
+            password='password123'
+        )
+
     def test_lista_jogos_vazio(self):
         response = self.client.get(reverse('jogo-list'))
         self.assertEqual(response.status_code, 200)
@@ -93,20 +100,12 @@ class JogoViewTests(TestCase):
         self.assertContains(response, "Super Mario Odyssey")
 
     def test_pagina_criacao_jogo(self):
-        User.objects.create_user(
-            username='user1',
-            password='password123'
-        )
         self.client.login(username="user1", password="password123")
         response = self.client.get(reverse('jogo-create'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'gamerboxd/game_form.html')
 
     def test_usuario_cria_jogos(self):
-        User.objects.create_user(
-            username='user1',
-            password='password123'
-        )
         jogo = {
             "nome": "Super Mario Odyssey",
             "desenvolvedora": "Nintendo",
@@ -121,6 +120,77 @@ class JogoViewTests(TestCase):
         )
         self.assertTrue(Jogo.objects.filter(
             nome="Super Mario Odyssey").exists())
+
+    def test_pagina_edicao_jogo(self):
+        jogo = Jogo.objects.create(
+            nome="Super Mario Odyssey",
+            desenvolvedora="Nintendo",
+            dtLanc="2013-09-07",
+            genero="Plataforma"
+        )
+        self.client.login(username="user1", password="password123")
+        response = self.client.get(
+            reverse('jogo-edit', kwargs={'id_jogo': jogo.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'gamerboxd/game_form.html')
+
+    def test_usuario_edita_jogos(self):
+        Jogo.objects.create(
+            nome="Super Mario Odyssey",
+            desenvolvedora="Nintendo",
+            dtLanc="2013-09-07",
+            genero="Plataforma"
+        )
+        jogo = {
+            "nome": "Super Mario Odyssey",
+            "desenvolvedora": "Bethesda",
+            "dtLanc": "2013-09-07",
+            "genero": "Plataforma"
+
+        }
+        self.client.login(username="user1", password="password123")
+        self.client.post(
+            reverse('jogo-create'),
+            jogo
+        )
+        self.assertTrue(Jogo.objects.filter(
+            nome="Super Mario Odyssey",
+            desenvolvedora="Bethesda").exists())
+
+    def test_pagina_confirma_delete_jogo(self):
+        jogo = Jogo.objects.create(
+            nome="Super Mario Odyssey",
+            desenvolvedora="Nintendo",
+            dtLanc="2013-09-07",
+            genero="Plataforma"
+        )
+        self.client.login(username="user1", password="password123")
+        response = self.client.get(
+            reverse(
+                'jogo-delete',
+                kwargs={'id_jogo': jogo.id},
+            ),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'gamerboxd/game_confirm_delete.html')
+        self.assertContains(response, jogo.nome)
+
+    def test_usuario_delete_jogo(self):
+        jogo = Jogo.objects.create(
+            nome="Super Mario Odyssey",
+            desenvolvedora="Nintendo",
+            dtLanc="2013-09-07",
+            genero="Plataforma"
+        )
+        self.client.login(username="user1", password="password123")
+        response = self.client.post(
+            reverse(
+                'jogo-delete',
+                kwargs={'id_jogo': jogo.id},
+            ),
+        )
+        self.assertRedirects(response, reverse('jogo-list'))
+        self.assertFalse(Jogo.objects.filter(id=jogo.id).exists())
 
 
 class ReviewViewsTests(TestCase):

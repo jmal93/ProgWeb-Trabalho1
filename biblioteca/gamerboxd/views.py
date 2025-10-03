@@ -95,7 +95,43 @@ def jogoCreateView(request):
     else:
         form = JogoForm()
 
-    return render(request, "gamerboxd/game_form.html", {"form": form})
+    return render(request, "gamerboxd/game_form.html", {
+        "form": form,
+        "usuario": request.user,
+        "edicao": False
+    })
+
+
+@login_required
+def jogoEditView(request, id_jogo):
+    jogo = get_object_or_404(Jogo, id=id_jogo)
+
+    if request.method == "POST":
+        form = JogoForm(request.POST, instance=jogo)
+        if form.is_valid():
+            form.save()
+            return redirect("jogo-list")
+    else:
+        form = JogoForm(instance=jogo)
+
+    return render(request, "gamerboxd/game_form.html", {
+        "form": form,
+        "usuario": request.user,
+        "edicao": True
+    })
+
+
+@login_required
+def jogoDeleteView(request, id_jogo):
+    jogo = get_object_or_404(Jogo, id=id_jogo)
+
+    if request.method == "POST":
+        jogo.delete()
+        return redirect('jogo-list')
+
+    return render(request, "gamerboxd/game_confirm_delete.html", {
+        "jogo": jogo
+    })
 
 
 @login_required
