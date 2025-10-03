@@ -1,0 +1,18 @@
+{% extends "biblioteca/base.html" %}
+
+{% block title %}Jogos{% endblock title %}
+
+{% block content %}
+<h2 class="container text-center">
+  Lista de jogos
+</h2>
+{% if jogos %}
+{% for jogo in jogos %}
+{{jogo.nome}}
+{% endfor %}
+{% else %}
+<p>Sem jogos</p>
+<a href="/gamerboxd/jogos/new">Criar o primeiro jogo</a>
+{% endif %}
+
+{% endblock content %}

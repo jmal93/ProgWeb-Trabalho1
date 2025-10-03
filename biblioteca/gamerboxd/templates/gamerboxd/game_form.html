@@ -1,0 +1,17 @@
+{% extends "biblioteca/base.html" %}
+
+{% block title %}Cadastrar jogo novo{% endblock title %}
+
+{% block content %}
+<h2 class="container text-center">
+  Lista de jogos
+</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">
+    Salvar Jogo
+  </button>
+</form>
+{% endblock content %}
