@@ -1,5 +1,14 @@
 {% extends "biblioteca/base.html" %}
-{% block title %}Registro de Usuário{% endblock title%}
+{% load static %}
+
+{% block title %}
+Registro de Usuário
+{% endblock title%}
+
+{% block extra_css %}
+<link href="{% static "css/forms.css" %}" rel="stylesheet">
+{% endblock extra_css %}
+
 {% block content %}
 <div class="form-container">
   <div class="form-card">
@@ -27,8 +36,8 @@
       </div>
       {% endfor %}
 
-      <div class="form-text-center">
-        <button type="submit" class="btn btn-primary">Registrar</button>
+      <div style="text-align: center; width: 100%;">
+        <button type="submit" class="btn-form-primary">Registrar</button>
       </div>
     </form>
   </div>

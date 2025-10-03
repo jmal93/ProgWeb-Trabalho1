@@ -1,23 +1,35 @@
 {% extends 'biblioteca/base.html' %}
+{% load static %}
+
 {% block title %}
 Login
 {% endblock %}
+
+{% block extra_css %}
+<link href="{% static "css/forms.css" %}" rel="stylesheet">
+{% endblock extra_css %}
+
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-md-6 col-lg-4">
-    <h2>Página de Login</h2>
-    <form method="post">
-      {% csrf_token %}
-      <div class="">
-        <table class="formulario">
-          {{ form.as_table }}
-          <tr>
-            <td></td>
-            <td><input type="submit" value="Login"></td>
-          </tr>
-        </table>
-      </div>
-    </form>
+    <div class="form-container">
+      <h2 class="form-title">Página de Login</h2>
+      <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}" class="form-label">
+            {{ field.label }}
+          </label>
+          {{ field }}
+        </div>
+        {% endfor %}
+        <div style="text-align: center; width: 100%">
+          <button type="submit" class="btn-form-primary">Login</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock content%}
