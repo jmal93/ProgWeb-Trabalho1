@@ -1,5 +1,5 @@
-from gamerboxd.models import Usuario, Review
-from .forms import ReviewForm
+from gamerboxd.models import Usuario, Review, Jogo
+from .forms import ReviewForm, JogoForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -74,6 +74,30 @@ def reviewDeleteView(request, id_usuario, id_jogo):
         "review": review,
         "usuario": usuario
     })
+
+
+def jogoListView(request):
+    jogos = Jogo.objects.all()
+    context = {
+        "jogos": jogos,
+    }
+
+    return render(request, "gamerboxd/game_list.html", context)
+
+
+@login_required
+def jogoCreateView(request):
+    if request.method == "POST":
+        form = JogoForm(request.POST)
+
+        if form.is_valid():
+            jogo = form.save(commit=False)
+            jogo.save()
+            return redirect("jogo-list")
+    else:
+        form = JogoForm()
+
+    return render(request, "gamerboxd/game_form.html", {"form": form})
 
 
 @login_required
