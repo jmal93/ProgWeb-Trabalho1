@@ -1,6 +1,6 @@
 from django.test import TestCase
 from gamerboxd.models import Jogo, Usuario, Review, User
-from gamerboxd.forms import ReviewForm
+from gamerboxd.forms import ReviewForm, JogoForm
 
 
 class ReviewFormTests(TestCase):
@@ -49,5 +49,35 @@ class ReviewFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn(
             "Esse usuário já fez uma review para esse jogo.",
+            form.errors["__all__"]
+        )
+
+
+class JogoFormTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.data = {
+            "nome": "Celeste",
+            "genero": "Plataforma",
+            "desenvolvedora": "Maddy Makes Games",
+            "dtLanc": "2018-01-25"
+        }
+
+    def test_jogo_form_valido(self):
+        form = JogoForm(data=self.data)
+
+        self.assertTrue(form.is_valid())
+
+    def test_erro_jogo_duplicado(self):
+        Jogo.objects.create(
+            nome="Celeste",
+            genero="Plataforma",
+            desenvolvedora="Maddy Makes Games",
+            dtLanc="2018-01-25"
+        )
+        form = JogoForm(data=self.data)
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            "Esse jogo já existe",
             form.errors["__all__"]
         )
