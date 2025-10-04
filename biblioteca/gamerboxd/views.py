@@ -95,7 +95,7 @@ def jogoCreateView(request):
     else:
         form = JogoForm()
 
-    return render(request, "gamerboxd/game_form.html", {
+    return render(request, "gamerboxd/jogo_form.html", {
         "form": form,
         "usuario": request.user,
         "edicao": False

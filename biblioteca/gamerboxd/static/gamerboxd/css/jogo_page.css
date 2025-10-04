@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.jogo-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.jogo-page h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.jogo-page p {
+    margin: 0.3rem 0;
+    color: #555;
+}
+
+.jogo-page h2 {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: #222;
+}
+
+.reviews {
+    margin-top: 1rem;
+}
+
+.review {
+    background: #f1f1f1;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.review .nota {
+    font-weight: bold;
+    color: #0077cc;
+}
+
+.review .descricao {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.review .usuario {
+    font-size: 0.9rem;
+    color: #777;
+    text-align: right;
+}
