@@ -1,0 +1,29 @@
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gamerboxd/css/jogo_form.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {% if edicao %}
+            Editar Jogo
+        {% else %}
+            Cadastrar Novo Jogo
+        {% endif %}
+    </h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">
+            {% if edicao %}
+                Salvar Alterações
+            {% else %}
+                Salvar Jogo
+            {% endif %}
+        </button>
+    </form>
+
+    <a class="voltar" href="{% url 'jogo-list' %}">← Voltar para Jogos</a>
+{% endblock %}

@@ -1,18 +1,29 @@
 {% extends "biblioteca/base.html" %}
+{% load static %}
 
-{% block title %}Jogos{% endblock title %}
+{% block title %}Lista de Jogos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gamerboxd/css/jogos_list.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2 class="container text-center">
-  Lista de jogos
-</h2>
-{% if jogos %}
-{% for jogo in jogos %}
-{{jogo.nome}}
-{% endfor %}
-{% else %}
-<p>Sem jogos</p>
-<a href="/gamerboxd/jogos/new">Criar o primeiro jogo</a>
-{% endif %}
-
-{% endblock content %}
+<div class="container">
+    <h1>Jogos Cadastrados</h1>
+    {% if jogos %}
+        <ul>
+            {% for jogo in jogos %}
+                <li>
+                    <a href="{% url 'jogo-page' jogo.id %}">{{ jogo.nome }}</a><br>
+                    <span class="genero">Gênero: {{ jogo.genero }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nenhum jogo cadastrado ainda.</p>
+    {% endif %}
+</div>
+<div class="novo-jogo">
+    <a href="{% url 'jogo-create' %}" class="btn-novo">+ Cadastrar Novo Jogo</a>
+</div>
+{% endblock %}
